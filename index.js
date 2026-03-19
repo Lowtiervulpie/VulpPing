@@ -62,13 +62,22 @@ app.post('/webhook', (req, res) => {
     const messageType = req.headers['twitch-eventsub-message-type'];
 
     console.log('📩 Webhook received:', messageType);
+    console.log('📦 Body:', JSON.stringify(req.body));
 
-    // 🔑 THIS IS THE IMPORTANT PART
+    // 🔑 REQUIRED FOR TWITCH VERIFICATION
     if (messageType === 'webhook_callback_verification') {
-      console.log('✅ Twitch verification received');
-      return res.status(200).send(req.body.challenge);
+      const challenge = req.body?.challenge;
+
+      if (!challenge) {
+        console.error('❌ No challenge received');
+        return res.sendStatus(400);
+      }
+
+      console.log('✅ Sending challenge back to Twitch');
+      return res.status(200).send(challenge);
     }
 
+    // 🔔 LIVE EVENT
     if (
       messageType === 'notification' &&
       req.body?.subscription?.type === 'stream.online'
@@ -77,10 +86,12 @@ app.post('/webhook', (req, res) => {
       handleLive(req.body.event);
     }
 
+    // ALWAYS respond
     res.sendStatus(200);
+
   } catch (err) {
-    console.error('❌ Webhook error:', err);
-    res.sendStatus(500);
+    console.error('❌ Webhook crashed:', err);
+    res.sendStatus(200); // <- important: don't break Twitch
   }
 });
 // ===== LIVE HANDLER =====
