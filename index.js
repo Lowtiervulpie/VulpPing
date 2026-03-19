@@ -52,30 +52,34 @@ client.once('clientReady', () => {
 });
 
 // ===== WEBHOOK =====
-app.use(express.json());
-
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.post('/webhook', (req, res) => {
   try {
     const messageType = req.headers['twitch-eventsub-message-type'];
 
-    console.log("📩 Webhook received:", messageType);
+    console.log('📩 Webhook received:', messageType);
 
+    // 🔑 THIS IS THE IMPORTANT PART
     if (messageType === 'webhook_callback_verification') {
-      console.log("✅ Twitch verification received");
+      console.log('✅ Twitch verification received');
       return res.status(200).send(req.body.challenge);
     }
 
-    if (messageType === 'notification') {
-      if (req.body?.subscription?.type === 'stream.online') {
-        console.log("🚨 STREAM WENT LIVE EVENT RECEIVED");
-        handleLive(req.body.event);
-      }
+    if (
+      messageType === 'notification' &&
+      req.body?.subscription?.type === 'stream.online'
+    ) {
+      console.log('🚨 STREAM WENT LIVE EVENT RECEIVED');
+      handleLive(req.body.event);
     }
 
     res.sendStatus(200);
-
   } catch (err) {
-    console.error("❌ Webhook error:", err);
+    console.error('❌ Webhook error:', err);
     res.sendStatus(500);
   }
 });
