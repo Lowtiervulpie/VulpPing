@@ -215,7 +215,7 @@ async function ensureTwitchSub() {
         type: "stream.online",
         version: "1",
         condition: {
-          broadcaster_user_login: process.env.TWITCH_USERNAME
+          broadcaster_user_id: "135382594"
         },
         transport: {
           method: "webhook",
