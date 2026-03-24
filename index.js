@@ -44,7 +44,9 @@ let isLive = false;
 // ===== EXPRESS SERVER =====
 const app = express();
 app.use(express.json());
-
+app.get('/', (req, res) => {
+	res.status(200).send('VulpPing alive');
+});
 // ===== READY =====
 client.once('clientReady', () => {
   console.log(`🦊 VulpSignal ULTRA running as ${client.user.tag}`);
