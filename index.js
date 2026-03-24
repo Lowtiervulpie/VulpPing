@@ -53,6 +53,9 @@ client.once('clientReady', () => {
 
 // ===== WEBHOOK =====
 app.use(express.json());
+app.get('/webhook', (req, res) => {
+  res.status(200).send('Webhook ready');
+});
 app.post('/webhook', (req, res) => {
   try {
     const messageType = req.headers['twitch-eventsub-message-type'];
