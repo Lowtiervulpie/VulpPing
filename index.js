@@ -51,11 +51,7 @@ app.get('/', (req, res) => {
 client.once('clientReady', () => {
   console.log(`🦊 VulpSignal ULTRA running as ${client.user.tag}`);
 });
-// start Express immediately
-startServer();
-
 // ===== WEBHOOK =====
-app.use(express.json());
 app.get('/webhook', (req, res) => {
   res.status(200).send('Webhook ready');
 });
@@ -185,5 +181,7 @@ app.listen(PORT, () => {
   console.log(`⚡ Server running on port ${PORT}`);
 });
 }
+// start Express
+startServer();
 // ===== LOGIN =====
 client.login(process.env.DISCORD_TOKEN);
