@@ -48,8 +48,9 @@ app.use(express.json());
 // ===== READY =====
 client.once('clientReady', () => {
   console.log(`🦊 VulpSignal ULTRA running as ${client.user.tag}`);
-  startServer();
 });
+// start Express immediately
+startServer();
 
 // ===== WEBHOOK =====
 app.use(express.json());
